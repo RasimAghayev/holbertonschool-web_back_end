@@ -52,3 +52,4 @@ For my learning of backend web dev in Holberton School
 | **100-safe_first_element.py, 100-main.py** | Duck typing - first element of a sequence     |
 | **101-safely_get_value.py, 101-main.py**   | More involved type annotations                |
 | **102-main.py, 102-type_checking.py**      | Type Checking                                 |
+
