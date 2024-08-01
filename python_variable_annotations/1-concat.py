@@ -4,7 +4,7 @@
 """
 
 
-def concat(str1: str, str1: str) -> str:
+def concat(str1: str, str2: str) -> str:
     """
         Args:
             str1: The first parameter
@@ -15,4 +15,4 @@ def concat(str1: str, str1: str) -> str:
 
     """
 
-    return (str1 + str1)
+    return (str1 + str2)
