@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-    Duck typing sequence Any
+    Duck typing Typevar
 """
 from typing import Any, Union, TypeVar, Mapping
 
