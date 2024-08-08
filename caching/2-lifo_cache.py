@@ -33,6 +33,7 @@ class LIFOCache(BaseCaching):
       >>> print(self.cache_data)
       {F: "COD", B: "World", D: "School", F, "COD"}
     """
+    LAST_PUT = ""
 
     def __init__(self):
         """ Initiliaze
@@ -47,21 +48,17 @@ class LIFOCache(BaseCaching):
                 key: of the dict
                 item: value of the key
         """
-        if key or item is not None:
-            valuecache = self.get(key)
-            # Make a new
-            if valuecache is None:
-                if len(self.cache_data) >= BaseCaching.MAX_ITEMS:
-                    keydel = list(self.cache_data.keys())
-                    lenlast = len(keydel) - 1
-                    del self.cache_data[keydel[lenlast]]
-                    print("DISCARD: {}".format(keydel[lenlast]))
-            # If it's None this del the key and after update the same key
-            # If it's wrong fix eliminate and ask
-            else:
-                del self.cache_data[key]
-            # Modify value
-            self.cache_data[key] = item
+        if key is None or item is None:
+            return
+        if (len(self.cache_data.items()) == BaseCaching.MAX_ITEMS):
+            if (key not in self.cache_data.keys()):
+                lastItem = self.LAST_PUT
+                print("DISCARD:", lastItem)
+                self.cache_data.pop(lastItem)
+
+        self.cache_data[key] = item
+        self.LAST_PUT = key
+
 
     def get(self, key):
         """
