@@ -3,6 +3,7 @@
     BaseCache module
 """
 
+
 from base_caching import BaseCaching
 
 
@@ -43,7 +44,6 @@ class LRUCache(BaseCaching):
         """ Initiliaze
         """
         super().__init__()
-        self.leastrecent = []
 
     def put(self, key, item):
         """
@@ -57,12 +57,18 @@ class LRUCache(BaseCaching):
             return
         if (len(self.cache_data.items()) == BaseCaching.MAX_ITEMS):
             if (key not in self.cache_data.keys()):
-                lastItem = self.LAST_PUT
-                print("DISCARD:", lastItem)
-                self.cache_data.pop(lastItem)
+                leastItem = {
+                    k: v for k, v in sorted(self.AGE_BITS.items(),
+                                            key=lambda item: item[1])
+                }
+                leastItem = list(leastItem)[0]
+                print("DISCARD:", leastItem)
+                self.cache_data.pop(leastItem)
+                self.AGE_BITS.pop(leastItem)
 
         self.cache_data[key] = item
-        self.LAST_PUT = key
+        self.AGE += 1
+        self.AGE_BITS[key] = self.AGE
 
     def get(self, key):
         """
