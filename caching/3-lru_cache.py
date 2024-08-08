@@ -36,7 +36,8 @@ class LRUCache(BaseCaching):
       D: School
       E: Battery
     """
-    LAST_PUT = ""
+    AGE = 0
+    AGE_BITS = {}
 
     def __init__(self):
         """ Initiliaze
