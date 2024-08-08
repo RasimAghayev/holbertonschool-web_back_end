@@ -73,10 +73,9 @@ class LRUCache(BaseCaching):
             Return:
                 value of the key
         """
-        valuecache = self.cache_data.get(key)
-
-        if valuecache:
-            self.leastrecent.remove(key)
-            self.leastrecent.insert(0, key)
-
-        return valuecache
+        if key not in self.cache_data.keys():
+            return None
+        else:
+            self.AGE += 1
+            self.AGE_BITS[key] = self.AGE
+            return self.cache_data[key]
