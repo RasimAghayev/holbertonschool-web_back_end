@@ -49,7 +49,7 @@ class FIFOCache(BaseCaching):
         """
         if key or item is None:
             return
-        else
+        else:
             valuecache = self.get(key)
             if valuecache is None:
                 if len(self.cache_data) >= BaseCaching.MAX_ITEMS:
