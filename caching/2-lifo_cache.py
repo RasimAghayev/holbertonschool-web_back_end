@@ -48,6 +48,7 @@ class LIFOCache(BaseCaching):
                 key: of the dict
                 item: value of the key
         """
+
         if key is None or item is None:
             return
         if (len(self.cache_data.items()) == BaseCaching.MAX_ITEMS):
@@ -58,7 +59,6 @@ class LIFOCache(BaseCaching):
 
         self.cache_data[key] = item
         self.LAST_PUT = key
-
 
     def get(self, key):
         """
