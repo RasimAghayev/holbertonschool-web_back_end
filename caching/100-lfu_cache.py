@@ -6,7 +6,7 @@
 from base_caching import BaseCaching
 
 
-class LFUCache(BaseCaching):
+class LRUCache(BaseCaching):
     """ LRUCache define a LRU algorithm to use cache
 
       To use:
@@ -36,8 +36,14 @@ class LFUCache(BaseCaching):
       D: School
       E: Battery
     """
+    AGE = 0
+    AGE_BITS = {}
 
     def __init__(self):
+
+        super().__init__()
+
+    def put(self, key, item):
         """ Initiliaze
         """
         super().__init__()
@@ -51,26 +57,22 @@ class LFUCache(BaseCaching):
                 key: of the dict
                 item: value of the key
         """
-        if key or item is not None:
-            valuecache = self.get(key)
-            # Make a new
-            if valuecache is None:
-                if len(self.cache_data) >= BaseCaching.MAX_ITEMS:
-                    keydel = self.leastrecent
-                    lendel = len(keydel) - 1
-                    del self.cache_data[keydel[lendel]]
-                    print("DISCARD: {}".format(self.leastrecent.pop()))
-            else:
-                del self.cache_data[key]
+        if key is None or item is None:
+            return
+        if (len(self.cache_data.items()) == BaseCaching.MAX_ITEMS):
+            if (key not in self.cache_data.keys()):
+                leastItem = {
+                    k: v for k, v in sorted(self.AGE_BITS.items(),
+                                            key=lambda item: item[1])
+                }
+                leastItem = list(leastItem)[0]
+                print("DISCARD:", leastItem)
+                self.cache_data.pop(leastItem)
+                self.AGE_BITS.pop(leastItem)
 
-            if key in self.leastrecent:
-                idxtodel = self.search_first(self.leastrecent, key)
-                self.leastrecent.pop(idxtodel)
-                self.leastrecent.insert(0, key)
-            else:
-                self.leastrecent.insert(0, key)
-
-            self.cache_data[key] = item
+        self.cache_data[key] = item
+        self.AGE += 1
+        self.AGE_BITS[key] = self.AGE
 
     def get(self, key):
         """
@@ -82,19 +84,9 @@ class LFUCache(BaseCaching):
             Return:
                 value of the key
         """
-        valuecache = self.cache_data.get(key)
-
-        if valuecache:
-            idxtodel = self.search_first(self.leastrecent, key)
-            self.leastrecent.pop(idxtodel)
-            self.leastrecent.insert(0, key)
-
-        return valuecache
-
-    @staticmethod
-    def search_first(mrulist, key):
-        for i in range(0, len(mrulist)):
-            if mrulist[i] == key:
-                return (i)
-
-        return None
+        if key not in self.cache_data.keys():
+            return None
+        else:
+            self.AGE += 1
+            self.AGE_BITS[key] = self.AGE
+            return self.cache_data[key]
