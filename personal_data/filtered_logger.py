@@ -4,8 +4,8 @@ from re import sub
 from typing import List
 
 
-def filter_datum(fields: List[str], redaction: str,
-                 message: str, separator: str) -> str:
+def filter_datum(fields: List[str], redaction: str, message: str,
+                 separator: str) -> str:
     """
         Args:
             fields: a list of strings representing all fields to obfuscate
@@ -17,4 +17,5 @@ def filter_datum(fields: List[str], redaction: str,
         Return:
             String with string ofuscated
     """
-    return sub(r'(' + '|'.join(fields) + r')=[^' + separator + r']*', r'\1=' + redaction, message)
+    return sub(r'(' + '|'.join(fields) + r')=[^' + separator + r']*',
+               r'\1=' + redaction, message)
