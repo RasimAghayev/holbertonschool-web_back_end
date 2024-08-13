@@ -4,7 +4,7 @@ from re import sub
 from typing import List
 
 
-def filter_datum(fields: List[str], redaction: str, message: str,
+def filter_datum(fields: List, redaction: str, message: str,
                  separator: str) -> str:
     """
         Args:
@@ -17,5 +17,8 @@ def filter_datum(fields: List[str], redaction: str, message: str,
         Return:
             String with string ofuscated
     """
-    return sub(r'(' + '|'.join(fields) + r')=[^' + separator + r']*',
-               r'\1=' + redaction, message)
+    for field in fields:
+        message = sub(f'{field}=.+?{separator}',
+                      f'{field}={redaction}{separator}', message)
+
+    return message
