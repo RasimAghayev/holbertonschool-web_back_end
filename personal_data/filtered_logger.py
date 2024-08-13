@@ -17,4 +17,4 @@ def filter_datum(fields: List[str], redaction: str,
         Return:
             String with string ofuscated
     """
-    return re.sub(r'(' + '|'.join(fields) + r')=[^' + separator + r']*', r'\1=' + redaction, message)
+    return sub(r'(' + '|'.join(fields) + r')=[^' + separator + r']*', r'\1=' + redaction, message)
