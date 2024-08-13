@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """ Ofuscated and replace with regex """
-from re import sub
+import re
 from typing import List
 
 
@@ -18,7 +18,7 @@ def filter_datum(fields: List, redaction: str, message: str,
             String with string ofuscated
     """
     for field in fields:
-        message = sub(f'{field}=.+?{separator}',
+        message = re.sub(f'{field}=.+?{separator}',
                       f'{field}={redaction}{separator}', message)
 
     return message
