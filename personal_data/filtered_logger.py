@@ -17,8 +17,4 @@ def filter_datum(fields: List[str], redaction: str,
         Return:
             String with string ofuscated
     """
-    
-    regex = r'(\w+)=([\w\-.]+@*[\w\-.]+)'
-    for field in fields:
-        return sub(regex, lambda x: x.group(1) + '=' + redaction
-               if x.group(1) in fields else x.group(), message)
+    return re.sub(r'(' + '|'.join(fields) + r')=[^' + separator + r']*', r'\1=' + redaction, message)
