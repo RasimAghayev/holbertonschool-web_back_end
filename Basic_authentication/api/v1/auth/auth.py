@@ -12,14 +12,20 @@ class Auth:
     """ Method for requiring authentication """
     if path is None or excluded_paths is None or not len(excluded_paths):
       return True
-    # Add slash to all cases for consistency
+    
     if path[-1] != '/':
       path += '/'
-    if excluded_paths[-1] != '/':
-      excluded_paths += '/'
-    if path in excluded_paths:
-      return False
-    return True
+
+      for excluded_path in excluded_paths:
+          if excluded_path.endswith('*'):
+              if path.startswith(excluded_path[:-1]):
+                  return False
+          else:
+              if excluded_path[-1] != '/':
+                  excluded_path += '/'
+              if path == excluded_path:
+                  return False
+
 
   def authorization_header(self, request=None) -> str:
     """ Method that handles authorization header """
