@@ -38,3 +38,4 @@ class Auth:
     def current_user(self, request=None) -> TypeVar("User"):
         """Validates current user"""
         return None
+
