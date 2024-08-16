@@ -3,11 +3,10 @@
 Route module for the API
 """
 from os import getenv
-from api.v1.views import app_views
-from flask import Flask, jsonify, abort, request
+from flask import Flask, jsonify, abort, json, Response, request
 from flask_cors import CORS, cross_origin
+from api.v1.views import app_views
 from typing import Tuple
-import os
 
 app = Flask(__name__)
 app.register_blueprint(app_views)
@@ -35,7 +34,9 @@ def not_found(error) -> Tuple:
 @app.errorhandler(401)
 def unauth(error) -> Tuple:
     """Unauthorized handler"""
-    return jsonify({"error": "Unauthorized"}), 401
+    response = {"error": "Unauthorized"}
+    pretty_response = json.dumps(response, indent=2)
+    return Response(pretty_response, status=401, mimetype='application/json')
 
 
 @app.errorhandler(403)
