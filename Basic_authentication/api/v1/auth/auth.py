@@ -5,36 +5,36 @@ from typing import List, TypeVar
 
 
 class Auth:
-  """ Class to manage the API authentication """
-  def require_auth(self, path: str, excluded_paths: List[str]) -> bool:
-    """ Method for requiring authentication """
-    if path is None or excluded_paths is None or not len(excluded_paths):
-      return True
+    """Class to manage the API authentication"""
 
-    # Normalize path by ensuring it has a trailing slash
-    if path[-1] != '/':
-      path += '/'
+    def require_auth(self, path: str, excluded_paths: List[str]) -> bool:
+        """Method for requiring authentication"""
+        if path is None or excluded_paths is None or not len(excluded_paths):
+            return True
 
-      for excluded_path in excluded_paths:
-        # Handle wildcard exclusion
-          if excluded_path.endswith('*'):
-              if path.startswith(excluded_path[:-1]):
-                  return False
-          else:
-            # Normalize excluded_path by ensuring it has a trailing slash
-              if excluded_path[-1] != '/':
-                  excluded_path += '/'
-              if path == excluded_path:
-                  return False
-    return True
+        # Normalize path by ensuring it has a trailing slash
+        if path[-1] != "/":
+            path += "/"
 
-  def authorization_header(self, request=None) -> str:
-    """ Method that handles authorization header """
-    if request is None:
-      return None
+            for excluded_path in excluded_paths:
+                # Handle wildcard exclusion
+                if excluded_path.endswith("*"):
+                    if path.startswith(excluded_path[:-1]):
+                        return False
+                else:
+                    if excluded_path[-1] != "/":
+                        excluded_path += "/"
+                    if path == excluded_path:
+                        return False
+        return True
 
-    return request.headers.get("Authorization", None)
+    def authorization_header(self, request=None) -> str:
+        """Method that handles authorization header"""
+        if request is None:
+            return None
 
-  def current_user(self, request=None) -> TypeVar('User'):
-    """ Validates current user """
-    return None
+        return request.headers.get("Authorization", None)
+
+    def current_user(self, request=None) -> TypeVar("User"):
+        """Validates current user"""
+        return None
