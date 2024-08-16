@@ -22,7 +22,7 @@ class Auth:
                     if path.startswith(excluded_path[:-1]):
                         return False
                 else:
-                    if excluded_path[-1] != "/":
+                    if not excluded_path.endswith("/"):
                         excluded_path += "/"
                     if path == excluded_path:
                         return False
