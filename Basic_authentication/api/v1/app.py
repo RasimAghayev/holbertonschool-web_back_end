@@ -3,14 +3,13 @@
 Route module for the API
 """
 from os import getenv
-from flask import Flask, jsonify, abort, json, Response, request
-from flask_cors import CORS, cross_origin
-from api.v1.views import app_views
+from flask import Flask, jsonify, abort, request
+from flask_cors import CORS
 from typing import Tuple
+from api.v1.views import app_views
 
 app = Flask(__name__)
 app.register_blueprint(app_views)
-app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
 CORS(app, resources={r"/api/v1/*": {"origins": "*"}})
 auth = None
 AUTH_TYPE = getenv("AUTH_TYPE")
@@ -34,9 +33,7 @@ def not_found(error) -> Tuple:
 @app.errorhandler(401)
 def unauth(error) -> Tuple:
     """Unauthorized handler"""
-    response = {"error": "Unauthorized"}
-    pretty_response = json.dumps(response, indent=2)
-    return Response(pretty_response, status=401, mimetype='application/json')
+    return jsonify({"error": "Unauthorized"}), 401
 
 
 @app.errorhandler(403)
