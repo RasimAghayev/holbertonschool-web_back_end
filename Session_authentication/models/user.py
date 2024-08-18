@@ -9,7 +9,7 @@ from typing import Optional
 class User(Base):
     """User class"""
 
-    def __init__(self, *args: Any, **kwargs: Dict[str, Any]) -> None:
+    def __init__(self, *args: any, **kwargs: dict[str, any]) -> None:
         """Initialize a User instance"""
         super().__init__(*args, **kwargs)
         self.email: Optional[str] = kwargs.get("email")

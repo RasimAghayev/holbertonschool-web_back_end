@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """View for Session Authentication"""
 
-from flask import jsonify, request, abort
+from flask import jsonify, request, abort, make_response
 from models.user import User
 from api.v1.views import app_views
 from os import getenv
