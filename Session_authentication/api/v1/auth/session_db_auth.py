@@ -3,8 +3,6 @@
 
 from api.v1.auth.session_exp_auth import SessionExpAuth
 from models.user_session import UserSession
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy import create_engine
 from datetime import datetime
 
 
@@ -23,7 +21,15 @@ class SessionDBAuth(SessionExpAuth):
         Base.metadata.create_all(self.engine)
 
     def create_session(self, user_id=None):
-        """Creates a new session ID and stores it in the database"""
+        """
+            Make a new Session to Database
+
+            Args:
+                user_id: Identificator of the user_id
+
+            Return:
+                Session ID
+        """
         session_id = super().create_session(user_id)
         if session_id is None:
             return None
