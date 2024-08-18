@@ -3,6 +3,7 @@
 """
 from api.v1.auth.auth import Auth
 from models.user import User
+from typing import TypeVar
 import uuid
 
 
@@ -23,7 +24,7 @@ class SessionAuth(Auth):
 
         return session_id
 
-    def session_cookie(self, request=None):
+    def session_cookie(self, request=None) -> str:
         """Returns the session cookie value"""
         if request is None:
             return None
@@ -35,7 +36,7 @@ class SessionAuth(Auth):
             return None
         return self.user_id_by_session_id.get(session_id)
 
-    def destroy_session(self, request=None):
+    def destroy_session(self, request=None) -> bool:
         """Destroys the session"""
         if request is None:
             return False
@@ -48,7 +49,7 @@ class SessionAuth(Auth):
         del self.user_id_by_session_id[session_id]
         return True
 
-    def current_user(self, request=None):
+    def current_user(self, request=None) -> TypeVar("User"):
         """ Returns a User instance based on a cookie value """
         session_id = self.session_cookie(request)
         if not session_id:
