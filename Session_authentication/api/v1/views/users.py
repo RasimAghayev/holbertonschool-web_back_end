@@ -4,6 +4,7 @@
 from api.v1.views import app_views
 from flask import abort, jsonify, request
 from models.user import User
+from typing import Optional
 
 
 @app_views.route("/users", methods=["GET"], strict_slashes=False)
@@ -17,7 +18,7 @@ def view_all_users() -> str:
 
 
 @app_views.route("/users/<user_id>", methods=["GET"], strict_slashes=False)
-def view_one_user(user_id: str = None) -> str:
+def view_one_user(user_id: Optional[str] = None) -> str:
     """GET /api/v1/users/:id
     Path parameter:
       - User ID
@@ -40,7 +41,7 @@ def view_one_user(user_id: str = None) -> str:
 
 
 @app_views.route("/users/<user_id>", methods=["DELETE"], strict_slashes=False)
-def delete_user(user_id: str = None) -> str:
+def delete_user(user_id: Optional[str] = None) -> str:
     """DELETE /api/v1/users/:id
     Path parameter:
       - User ID
@@ -96,7 +97,7 @@ def create_user() -> str:
 
 
 @app_views.route("/users/<user_id>", methods=["PUT"], strict_slashes=False)
-def update_user(user_id: str = None) -> str:
+def update_user(user_id: Optional[str] = None) -> str:
     """PUT /api/v1/users/:id
     Path parameter:
       - User ID

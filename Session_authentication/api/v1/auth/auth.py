@@ -2,13 +2,13 @@
 """ Module of Authentication """
 import os
 from flask import request
-from typing import List, TypeVar
+from typing import List, TypeVar, Optional
 
 
 class Auth:
     """Class to manage the API authentication"""
 
-    def session_cookie(self, request=None):
+    def session_cookie(self, request=None) -> Optional[str]:
         """Returns the value of the session cookie from the request."""
         if request is None:
             return None
@@ -40,13 +40,13 @@ class Auth:
                         return False
             return True
 
-    def authorization_header(self, request=None) -> str:
+    def authorization_header(self, request=None) -> Optional[str]:
         """Method that handles authorization header"""
         if request is None:
             return None
 
         return request.headers.get("Authorization", None)
 
-    def current_user(self, request=None) -> TypeVar("User"):
+    def current_user(self, request=None) -> None:
         """Validates current user"""
         return None

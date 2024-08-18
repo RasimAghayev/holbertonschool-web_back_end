@@ -3,8 +3,10 @@
 """
 from api.v1.auth.auth import Auth
 from models.user import User
-from typing import TypeVar
+from typing import TypeVar, Optional
 import uuid
+
+UserType = TypeVar('UserType', bound='User')
 
 
 class SessionAuth(Auth):
@@ -14,7 +16,7 @@ class SessionAuth(Auth):
         """Initializes the SessionAuth class"""
         self.user_id_by_session_id = {}
 
-    def create_session(self, user_id: str = None) -> str:
+    def create_session(self, user_id: Optional[str] = None) -> Optional[str]:
         """Creates a Session ID for a given user_id."""
         if user_id is None or not isinstance(user_id, str):
             return None
@@ -24,13 +26,15 @@ class SessionAuth(Auth):
 
         return session_id
 
-    def session_cookie(self, request=None) -> str:
+    def session_cookie(self, request=None) -> Optional[str]:
         """Returns the session cookie value"""
         if request is None:
             return None
         return request.cookies.get('_my_session_id')
 
-    def user_id_for_session_id(self, session_id: str = None) -> str:
+    def user_id_for_session_id(self,
+                               session_id: Optional[str] = None
+                               ) -> Optional[str]:
         """Returns a User ID based on a Session ID."""
         if session_id is None or not isinstance(session_id, str):
             return None
@@ -49,7 +53,7 @@ class SessionAuth(Auth):
         del self.user_id_by_session_id[session_id]
         return True
 
-    def current_user(self, request=None) -> TypeVar("User"):
+    def current_user(self, request=None) -> Optional[User]:
         """ Returns a User instance based on a cookie value """
         session_id = self.session_cookie(request)
         if not session_id:

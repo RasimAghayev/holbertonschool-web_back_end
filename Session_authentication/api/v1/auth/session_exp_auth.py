@@ -28,7 +28,7 @@ class SessionExpAuth(SessionAuth):
         }
         return session_id
 
-    def user_id_for_session_id(self, session_id=None):
+    def user_id_for_session_id(self, session_id=None) -> str:
         """Returns the user ID for a given session ID with expiration check"""
         if session_id is None:
             return None
