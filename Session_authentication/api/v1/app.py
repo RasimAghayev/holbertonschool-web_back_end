@@ -7,31 +7,35 @@ from flask import Flask, jsonify, abort, request
 from flask_cors import CORS
 from typing import Tuple
 from api.v1.views import app_views
-from api.v1.auth.auth import Auth
-from api.v1.auth.basic_auth import BasicAuth
-from api.v1.auth.session_auth import SessionAuth
+# from api.v1.auth.auth import Auth
+# from api.v1.auth.basic_auth import BasicAuth
+# from api.v1.auth.session_auth import SessionAuth
+# from models import storage
 
 app = Flask(__name__)
-app.register_blueprint(app_views)
 CORS(app, resources={r"/api/v1/*": {"origins": "*"}})
+app.register_blueprint(app_views)
 auth = None
 AUTH_TYPE = getenv("AUTH_TYPE")
 
-auth = BasicAuth()
+# auth = BasicAuth()
 
-if AUTH_TYPE == 'session_auth':
-    auth = SessionAuth()
-elif AUTH_TYPE == "basic_auth":
-    auth = BasicAuth()
+# if AUTH_TYPE == 'session_auth':
+#     auth = SessionAuth()
+# elif AUTH_TYPE == "basic_auth":
+#     auth = BasicAuth()
 
 if AUTH_TYPE == "auth":
     from api.v1.auth.auth import Auth
-
     auth = Auth()
+
 elif AUTH_TYPE == "basic_auth":
     from api.v1.auth.basic_auth import BasicAuth
-
     auth = BasicAuth()
+
+elif AUTH_TYPE == "session_auth":
+    from api.v1.auth.session_auth import SessionAuth
+    auth = SessionAuth()
 
 
 @app.errorhandler(404)
@@ -50,6 +54,12 @@ def unauth(error) -> Tuple:
 def forbid(error) -> Tuple:
     """Unauthorized handler"""
     return jsonify({"error": "Forbidden"}), 403
+
+
+# @app.teardown_appcontext
+# def teardown(exception):
+#     """Closes storage session"""
+#     storage.close()
 
 
 @app.before_request
