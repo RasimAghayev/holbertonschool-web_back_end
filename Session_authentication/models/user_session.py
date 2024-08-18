@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
-"""User Session Model"""
+""" UserSession model
+"""
 import hashlib
 from models.base import Base
 
 
 class UserSession(Base):
-    """User Session class"""
+    """ User class
+    """
 
     def __init__(self, *args: list, **kwargs: dict):
         """ Constructor """

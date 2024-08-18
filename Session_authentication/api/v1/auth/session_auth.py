@@ -1,22 +1,17 @@
 #!/usr/bin/env python3
-""" Auth model SessionAuth
+""" Module of Session Auth
 """
 from api.v1.auth.auth import Auth
 from models.user import User
-from typing import TypeVar, Dict, Optional
-import uuid
-
-UserType = TypeVar('UserType', bound='User')
+from typing import Dict, TypeVar
+from uuid import uuid4, UUID
 
 
 class SessionAuth(Auth):
-    """SessionAuth class for session-based authentication."""
+    """ Auth Class """
+    user_id_by_session_id: Dict = {}
 
-    def __init__(self):
-        """Initializes the SessionAuth class"""
-        self.user_id_by_session_id: Dict = {}
-
-    def create_session(self, user_id: Optional[str] = None) -> Optional[str]:
+    def create_session(self, user_id: str = None) -> str:
         """
             Make a new Session and register in the class
 
@@ -26,23 +21,15 @@ class SessionAuth(Auth):
             Return:
                 Session ID
         """
-        if user_id is None or not isinstance(user_id, str):
+        if user_id is None or type(user_id) is not str:
             return None
 
-        session_id: str = str(uuid.uuid4())
+        session_id: str = str(uuid4())
         self.user_id_by_session_id[session_id] = user_id
 
         return session_id
 
-    def session_cookie(self, request=None) -> Optional[str]:
-        """Returns the session cookie value"""
-        if request is None:
-            return None
-        return request.cookies.get('_my_session_id')
-
-    def user_id_for_session_id(self,
-                               session_id: Optional[str] = None
-                               ) -> Optional[str]:
+    def user_id_for_session_id(self, session_id: str = None) -> str:
         """
             Make a user ID based in session id
 
@@ -52,35 +39,14 @@ class SessionAuth(Auth):
             Return:
                 User ID
         """
-        if session_id is None or not isinstance(session_id, str):
+        if session_id is None or type(session_id) is not str:
             return None
 
-        user_id: Optional[str] = self.user_id_by_session_id.get(session_id)
+        user_id: str = self.user_id_by_session_id.get(session_id)
 
         return user_id
 
-    def destroy_session(self, request=None) -> bool:
-        """ Destroy the auth session if this
-
-        Return:
-            Destuction
-        """
-        if request is None:
-            return False
-        session_id: Optional[str] = self.session_cookie(request)
-        if session_id is None:
-            return False
-        user_id: Optional[str] = self.user_id_for_session_id(session_id)
-        if user_id is None:
-            return False
-        try:
-            del self.user_id_by_session_id[session_id]
-        except Exception:
-            pass
-
-        return True
-
-    def current_user(self, request=None) -> Optional[UserType]:
+    def current_user(self, request=None):
         """
             Take the session cookie and the user id
             and show the user
@@ -91,13 +57,34 @@ class SessionAuth(Auth):
             Return:
                 User instance based in cooikie
         """
-        session_id: Optional[str] = self.session_cookie(request)
-        if not session_id:
-            return None
+        session_id: str = self.session_cookie(request)
+        user_id: str = self.user_id_for_session_id(session_id)
+        user: TypeVar('User') = User.get(user_id)
 
-        user_id: Optional[str] = self.user_id_for_session_id(session_id)
-        if not user_id:
-            return None
-
-        user: Optional[UserType] = User.get(user_id)
         return user
+
+    def destroy_session(self, request=None):
+        """ Destroy the auth session if this
+
+        Return:
+            Destuction
+        """
+        if request is None:
+            return False
+
+        session_id: str = self.session_cookie(request)
+
+        if session_id is None:
+            return False
+
+        user_id: str = self.user_id_for_session_id(session_id)
+
+        if user_id is None:
+            return False
+
+        try:
+            del self.user_id_by_session_id[session_id]
+        except Exception:
+            pass
+
+        return True
