@@ -4,6 +4,7 @@
 import os
 from datetime import datetime, timedelta
 from api.v1.auth.session_auth import SessionAuth
+from typing import Optional
 
 
 class SessionExpAuth(SessionAuth):
@@ -17,7 +18,7 @@ class SessionExpAuth(SessionAuth):
         except ValueError:
             self.session_duration = 0
 
-    def create_session(self, user_id=None) -> str:
+    def create_session(self, user_id=None) -> Optional[str]:
         """Creates a new session ID with expiration"""
         session_id = super().create_session(user_id)
         if session_id is None:
@@ -28,7 +29,7 @@ class SessionExpAuth(SessionAuth):
         }
         return session_id
 
-    def user_id_for_session_id(self, session_id=None) -> str:
+    def user_id_for_session_id(self, session_id=None) -> Optional[str]:
         """Returns the user ID for a given session ID with expiration check"""
         if session_id is None:
             return None
