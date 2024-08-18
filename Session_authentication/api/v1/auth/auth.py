@@ -1,11 +1,23 @@
 #!/usr/bin/env python3
 """ Module of Authentication """
+import os
 from flask import request
 from typing import List, TypeVar
 
 
 class Auth:
     """Class to manage the API authentication"""
+
+    def session_cookie(self, request=None):
+        """Returns the value of the session cookie from the request."""
+        if request is None:
+            return None
+
+        session_name = os.getenv('SESSION_NAME')
+        if session_name is None:
+            return None
+
+        return request.cookies.get(session_name)
 
     def require_auth(self, path: str, excluded_paths: List[str]) -> bool:
         """Method for requiring authentication"""
