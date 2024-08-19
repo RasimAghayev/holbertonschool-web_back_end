@@ -1,0 +1,4 @@
+python3 -m pip install SQLAlchemy
+
+python -m pip3 install bcrypt
+
