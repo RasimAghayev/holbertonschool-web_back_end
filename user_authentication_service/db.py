@@ -32,14 +32,10 @@ class DB:
     def add_user(self, email: str, hashed_password: str) -> User:
         """Add a user to the database and return the User object
         """
-        # Create a new User object
         new_user = User(email=email, hashed_password=hashed_password)
 
-        # Add the new user to the session
         self._session.add(new_user)
 
-        # Commit the session to save the user to the database
         self._session.commit()
 
-        # Return the newly created User object
         return new_user

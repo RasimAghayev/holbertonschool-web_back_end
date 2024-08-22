@@ -1,8 +1,4 @@
-<p>
-<img width="260" height="170" src="https://www.flaticon.com/svg/static/icons/svg/627/627558.svg" align="right" >
-</p>
-
-# :colombia: 0x08. User authentication service
+# :azerbaijan: 0x08. User authentication service
 
 - How to declare API routes in a Flask app
 - How to get and set cookies
