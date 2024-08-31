@@ -2,31 +2,27 @@
 """Unit test
 """
 import unittest
-from parameterized import parameterized
 from utils import access_nested_map
+from parameterized import parameterized
 
 
 class TestAccessNestedMap(unittest.TestCase):
     """ Access nested map """
 
-    @parameterized.expand([
-        ({
-            "a": 1
-        }, ("a", ), 1),
-        ({
-            "a": {
-                "b": 2
-            }
-        }, ("a", ), {
+    @parameterized.expand([({
+        "a": 1
+    }, ("a", ), 1), ({
+        "a": {
             "b": 2
-        }),
-        ({
-            "a": {
-                "b": 2
-            }
-        }, ("a", "b"), 2),
-    ])
-    def test_access_nested_map(self, nested_map, path, expected):
+        }
+    }, ("a", ), {
+        "b": 2
+    }), ({
+        "a": {
+            "b": 2
+        }
+    }, ("a", "b"), 2)])
+    def test_access_nested_map(self, nested_map, path_map, result_expec):
         """ Access nested method
 
             args:
@@ -37,7 +33,7 @@ class TestAccessNestedMap(unittest.TestCase):
             return
                 Ok if its correct
         """
-        self.assertEqual(access_nested_map(nested_map, path), expected)
+        self.assertEqual(access_nested_map(nested_map, path_map), result_expec)
 
 
 if __name__ == "__main__":
