@@ -1,11 +1,11 @@
 modules = ["python-3.12", "nix"]
-run = "./python_async_comprehension/0-main.py"
+run = "./python_async_comprehension/0-python_variable_annotations/1-main.py"
 
 [nix]
 channel = "stable-24_05"
 
 [deployment]
-run = ["sh", "-c", "./python_async_comprehension/0-main.py"]
+run = ["sh", "-c", "./python_async_comprehension/0-python_variable_annotations/1-main.py"]
 
 [[ports]]
 localPort = 5000
