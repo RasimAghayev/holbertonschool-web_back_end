@@ -1,4 +1,4 @@
-modules = ["python-3.12", "nix"]
+modules = ["nix", "python-3.10", "python-3.12"]
 run = "./python_async_comprehension/0-python_variable_annotations/1-main.py"
 
 [nix]
