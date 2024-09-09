@@ -1,14 +1,12 @@
-USE holberton;
+-- Search bands with style Glam rock
+-- Durantion current
 
--- Creating the result table
-CREATE TEMPORARY TABLE glam_rock_bands AS
+-- SELECT band_name, IFNULL(split, 2020) - IFNULL(formed, 0) AS lifespan 
+-- FROM metal_bands 
+-- WHERE style LIKE '%Glam rock%';
+
+
 SELECT band_name, 
        (YEAR(split) - YEAR(formed)) AS lifespan
 FROM metal_bands
-WHERE main_style = 'Glam rock';
-
--- Selecting and ranking the bands by lifespan
-SELECT band_name, 
-       lifespan
-FROM glam_rock_bands
-ORDER BY lifespan DESC;
+WHERE style LIKE '%Glam rock%';
