@@ -1,15 +1,17 @@
 #!/usr/bin/env python3
 """ Test Cache class """
-import redis
 from exercise import Cache
 
 cache = Cache()
 
-# Test storing data
-data = b"hello"
-key = cache.store(data)
-print(key)
+# Define test cases
+TEST_CASES = {
+    b"foo": None,  # No conversion
+    123: int,  # Convert back to int
+    "bar": lambda d: d.decode("utf-8")  # Decode as UTF-8 string
+}
 
-# Verify the data is correctly stored in Redis
-local_redis = redis.Redis()
-print(local_redis.get(key))  # Should output: b'hello'
+for value, fn in TEST_CASES.items():
+  key = cache.store(value)  # Store the value
+  assert cache.get(key,
+                   fn=fn) == value  # Test retrieval with optional conversion
