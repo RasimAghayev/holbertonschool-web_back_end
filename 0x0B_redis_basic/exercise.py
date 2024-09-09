@@ -7,18 +7,10 @@ from functools import wraps
 
 
 def count_calls(method: Callable) -> Callable:
-    """Decorator to count how many times a method is called.
-
-    Args:
-        method (Callable): The method to be decorated.
-
-    Returns:
-        Callable: The wrapped method with call counting.
-    """
+    """Decorator to count how many times a method is called."""
 
     @wraps(method)
     def wrapper(self, *args, **kwargs):
-        """Wrapper function to increment the call count in Redis."""
         key = method.__qualname__
         self._redis.incr(key)
         return method(self, *args, **kwargs)
@@ -27,36 +19,41 @@ def count_calls(method: Callable) -> Callable:
 
 
 def call_history(method: Callable) -> Callable:
-    """Decorator to store the history of inputs and outputs for a function.
-
-    Args:
-        method (Callable): The method to be decorated.
-
-    Returns:
-        Callable: The wrapped method with history tracking.
-    """
+    """Decorator to store the history of inputs and outputs for a function."""
 
     @wraps(method)
     def wrapper(self, *args, **kwargs):
-        """Wrapper function to store function call history in Redis."""
-        # Qualified name of the method
         key = method.__qualname__
-        # Store inputs
         input_key = f"{key}:inputs"
         output_key = f"{key}:outputs"
 
-        # Convert input arguments to string and push to Redis
         self._redis.rpush(input_key, str(args))
-
-        # Execute the original method and capture the output
         result = method(self, *args, **kwargs)
-
-        # Store the result (output) in Redis
         self._redis.rpush(output_key, str(result))
 
         return result
 
     return wrapper
+
+
+def replay(method: Callable):
+    """Display the history of calls of a particular function."""
+    redis = method.__self__._redis  # Access the Redis instance from the method
+    key = method.__qualname__  # Qualified name of the method
+
+    input_key = f"{key}:inputs"
+    output_key = f"{key}:outputs"
+
+    # Get input and output lists from Redis
+    inputs = redis.lrange(input_key, 0, -1)
+    outputs = redis.lrange(output_key, 0, -1)
+
+    # Display call history
+    print(f"{key} was called {len(inputs)} times:")
+    for input_value, output_value in zip(inputs, outputs):
+        input_str = input_value.decode("utf-8")
+        output_str = output_value.decode("utf-8")
+        print(f"{key}(*{input_str}) -> {output_str}")
 
 
 class Cache:
@@ -70,14 +67,7 @@ class Cache:
     @call_history
     @count_calls
     def store(self, data: Union[str, bytes, int, float]) -> str:
-        """Store data in Redis with a random key.
-
-        Args:
-            data (Union[str, bytes, int, float]): The data to store.
-
-        Returns:
-            str: The randomly generated key.
-        """
+        """Store data in Redis with a random key."""
         key = str(uuid.uuid4())  # Generate a random key
         self._redis.set(key, data)  # Store the data with the key
         return key
@@ -86,15 +76,7 @@ class Cache:
             key: str,
             fn: Optional[Callable] = None
             ) -> Union[str, bytes, int, float, None]:
-        """Retrieve data from Redis and optionally apply a transformation.
-
-        Args:
-            key (str): The key of the data to retrieve.
-            fn (Callable, optional): A function to apply to the data. Defaults to None.
-
-        Returns:
-            Union[str, bytes, int, float, None]: The data stored in Redis, optionally transformed.
-        """
+        """Retrieve data from Redis and optionally apply a transformation."""
         data = self._redis.get(key)
         if data is None:
             return None
@@ -103,23 +85,9 @@ class Cache:
         return data
 
     def get_str(self, key: str) -> Optional[str]:
-        """Retrieve a string from Redis.
-
-        Args:
-            key (str): The key of the data to retrieve.
-
-        Returns:
-            Optional[str]: The retrieved string, or None if the key does not exist.
-        """
+        """Retrieve a string from Redis."""
         return self.get(key, fn=lambda d: d.decode('utf-8'))
 
     def get_int(self, key: str) -> Optional[int]:
-        """Retrieve an integer from Redis.
-
-        Args:
-            key (str): The key of the data to retrieve.
-
-        Returns:
-            Optional[int]: The retrieved integer, or None if the key does not exist.
-        """
+        """Retrieve an integer from Redis."""
         return self.get(key, fn=int)
