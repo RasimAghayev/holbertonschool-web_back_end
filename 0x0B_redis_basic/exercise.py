@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-""" Redis Cache Class with Call Counting """
+""" Redis Cache Class with Call Counting and Call History """
 import redis
 import uuid
 from typing import Union, Callable, Optional
@@ -19,12 +19,42 @@ def count_calls(method: Callable) -> Callable:
     @wraps(method)
     def wrapper(self, *args, **kwargs):
         """Wrapper function to increment the call count in Redis."""
-        # Use the method's qualified name as the Redis key
         key = method.__qualname__
-        # Increment the count for this method
         self._redis.incr(key)
-        # Call the original method and return its value
         return method(self, *args, **kwargs)
+
+    return wrapper
+
+
+def call_history(method: Callable) -> Callable:
+    """Decorator to store the history of inputs and outputs for a function.
+
+    Args:
+        method (Callable): The method to be decorated.
+
+    Returns:
+        Callable: The wrapped method with history tracking.
+    """
+
+    @wraps(method)
+    def wrapper(self, *args, **kwargs):
+        """Wrapper function to store function call history in Redis."""
+        # Qualified name of the method
+        key = method.__qualname__
+        # Store inputs
+        input_key = f"{key}:inputs"
+        output_key = f"{key}:outputs"
+
+        # Convert input arguments to string and push to Redis
+        self._redis.rpush(input_key, str(args))
+
+        # Execute the original method and capture the output
+        result = method(self, *args, **kwargs)
+
+        # Store the result (output) in Redis
+        self._redis.rpush(output_key, str(result))
+
+        return result
 
     return wrapper
 
@@ -37,6 +67,7 @@ class Cache:
         self._redis = redis.Redis()
         self._redis.flushdb()
 
+    @call_history
     @count_calls
     def store(self, data: Union[str, bytes, int, float]) -> str:
         """Store data in Redis with a random key.
@@ -64,7 +95,7 @@ class Cache:
         Returns:
             Union[str, bytes, int, float, None]: The data stored in Redis, optionally transformed.
         """
-        data = self._redis.get(key)  # Get the data from Redis
+        data = self._redis.get(key)
         if data is None:
             return None
         if fn:
